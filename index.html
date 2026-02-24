@@ -2,125 +2,327 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Love Oracle Tarot 🔮</title>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<title>Love Oracle Tarot — God Mode 🔮</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box}
 body{
-margin:0;font-family:'Arial';
-background:radial-gradient(circle at top,#ff9ad5,#ff3c8a,#2b0036);
-min-height:100vh;display:flex;align-items:center;justify-content:center;
-animation:bgmove 10s infinite alternate;
+margin:0;font-family:'Poppins',sans-serif;
+background:radial-gradient(circle at top,#ffb3e6,#ff4da6,#2b0036);
+min-height:100vh;
+display:flex;align-items:center;justify-content:center;
+overflow:hidden;
+animation:bgmove 15s infinite alternate;
 }
 @keyframes bgmove{
 0%{background-position:0% 50%}
 100%{background-position:100% 50%}
 }
+
+/* floating particles */
+.particle{
+position:absolute;width:6px;height:6px;border-radius:50%;
+background:rgba(255,255,255,.6);
+animation:float 20s linear infinite;
+}
+@keyframes float{
+from{transform:translateY(110vh);opacity:0}
+to{transform:translateY(-10vh);opacity:1}
+}
+
 .container{
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(12px);
-padding:30px;border-radius:25px;
-box-shadow:0 0 40px rgba(255,0,150,.6);
-width:420px;text-align:center;color:white;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(18px);
+padding:30px;border-radius:28px;
+box-shadow:0 0 60px rgba(255,0,180,.7);
+width:460px;max-width:92%;
+text-align:center;color:white;
+border:1px solid rgba(255,255,255,.2);
+animation:glow 3s infinite alternate;
 }
-h1{font-family:'Great Vibes';font-size:42px;margin-bottom:10px;text-shadow:0 0 15px #ff66c4}
+@keyframes glow{
+from{box-shadow:0 0 20px #ff66c4}
+to{box-shadow:0 0 60px #ff66c4}
+}
+
+h1{
+font-family:'Great Vibes';
+font-size:44px;margin:5px 0 10px;
+text-shadow:0 0 20px #ff66c4;
+}
+
+.subtitle{font-size:12px;opacity:.8;margin-bottom:10px}
+
 input,button{
-width:90%;padding:12px;margin:8px;border-radius:12px;border:none;
+width:90%;padding:12px;margin:8px;
+border-radius:14px;border:none;outline:none;
+font-size:14px;
 }
+
+input{
+background:rgba(255,255,255,.2);
+color:white;
+}
+
 button{
 background:linear-gradient(45deg,#ff4fd8,#ff005c);
-color:white;font-size:16px;
-box-shadow:0 0 15px rgba(255,0,120,.8);
-transition:.3s;
+color:white;font-weight:600;
+box-shadow:0 0 20px rgba(255,0,120,.9);
+cursor:pointer;transition:.3s;
 }
 button:hover{transform:scale(1.05)}
-.hidden{display:none}
-.loading{font-size:18px;animation:pulse 1.5s infinite}
-@keyframes pulse{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
 
-.cards{display:flex;justify-content:space-around;margin-top:15px}
+.hidden{display:none}
+
+.loading{
+font-size:18px;
+animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+0%{opacity:.3}50%{opacity:1}100%{opacity:.3}
+}
+
+.cards{
+display:flex;justify-content:space-around;
+margin-top:15px;
+perspective:1200px;
+}
+
 .card{
-width:95px;height:150px;
+width:105px;height:165px;
 background:linear-gradient(135deg,#2b0036,#ff4fd8);
-border-radius:12px;
-box-shadow:0 0 20px rgba(255,0,150,.8);
+border-radius:16px;
+box-shadow:0 0 30px rgba(255,0,150,.9);
 display:flex;align-items:center;justify-content:center;
-font-size:11px;padding:6px;
-animation:flip 1s ease;
-text-align:center;
+font-size:11px;padding:8px;text-align:center;
+transform-style:preserve-3d;
+animation:flip3d 1.2s ease;
 }
-@keyframes flip{
-0%{transform:rotateY(90deg)}
-100%{transform:rotateY(0deg)}
+
+@keyframes flip3d{
+0%{transform:rotateY(90deg) rotateZ(-5deg)}
+100%{transform:rotateY(0deg) rotateZ(0deg)}
 }
-.reading{text-align:left;font-size:13px;margin-top:10px}
-.glow{animation:glow 2s infinite alternate}
-@keyframes glow{
-from{box-shadow:0 0 10px #ff66c4}
-to{box-shadow:0 0 30px #ff66c4}
+
+.reading{
+text-align:left;font-size:12.5px;
+margin-top:12px;line-height:1.6;
+max-height:280px;overflow:auto;
+padding-right:5px;
 }
+
+hr{border:0;border-top:1px solid rgba(255,255,255,.3);margin:10px 0}
 </style>
 </head>
 
 <body>
-<div class="container glow">
+
+<!-- particles -->
+<script>
+for(let i=0;i<40;i++){
+let p=document.createElement("div");
+p.className="particle";
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=(10+Math.random()*20)+"s";
+p.style.opacity=Math.random();
+document.body.appendChild(p);
+}
+</script>
+
+<div class="container">
 <h1>Love Oracle 🔮</h1>
+<div class="subtitle">Ultra Pro Tarot System — Destiny Mode</div>
 
 <div id="formBox">
 <input id="myName" placeholder="Tên của bạn">
-<!-- 🔁 SỬA Ở ĐÂY -->
-<input id="myDob" type="date" placeholder="Ngày sinh của bạn">
-<input id="crushName" placeholder="Tên crush">
+<input id="myDob" type="date">
+<input id="crushName" placeholder="Tên người ấy">
 <input id="crushDob" type="date">
-<button onclick="startOracle()">Xem Quẻ</button>
+<button onclick="startOracle()">KÍCH HOẠT ĐỊNH MỆNH 🔮</button>
 </div>
 
-<div id="loading" class="loading hidden">🔮 Oracle đang kết nối năng lượng...</div>
+<div id="loading" class="loading hidden">🔮 Kết nối trường năng lượng vũ trụ...</div>
 
 <div id="resultBox" class="hidden">
 <h3 id="percentText"></h3>
 <p id="shortMsg"></p>
-<button onclick="drawTarot()">Trải Bài 3 Lá 🔮</button>
+<button onclick="drawTarot()">TRẢI BÀI TAROT 3 LÁ 🔮</button>
 </div>
 
 <div id="tarotBox" class="hidden">
-<h3>🔮 Trải Bài Tarot 3 Lá</h3>
+<h3>🔮 Trải Bài Định Mệnh</h3>
 <div class="cards" id="cards"></div>
 <div class="reading" id="reading"></div>
-<button onclick="resetAll()">Xem Lại</button>
+<button onclick="resetAll()">XEM LẠI</button>
 </div>
 
 </div>
 
 <script>
-/* ================= WEBHOOK ================= */
+/* ================= CONFIG ================= */
 const webhook = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P";
 
-/* ================= TAROT DATA ================= */
-const tarotPositive=[
-"The Lovers","The Sun","The Star","The Empress","The World","Temperance","Strength"
+/* ================= TAROT DECK ================= */
+const tarotDeck=[
+"The Lovers","The Sun","The Star","The Moon","The Devil","The Tower","Death","The Fool"
 ];
-const tarotNeutral=[
-"The Magician","The High Priestess","Wheel of Fortune","Justice","The Chariot","The Hermit"
-];
-const tarotWarning=[
-"The Devil","The Tower","Death","The Moon","Judgement","The Fool"
-];
+
+/* ================= TAROT DATABASE ULTRA ================= */
+const tarotDB={
+"The Lovers":{
+upright:{
+general:"Sự kết nối linh hồn, lựa chọn mang tính định mệnh, sự hòa hợp sâu sắc giữa hai linh hồn.",
+spirit:"Liên kết nghiệp duyên mạnh, kết nối từ kiếp trước.",
+love:"Tình yêu song phương, soulmate energy, cảm xúc chân thật.",
+role:"Biểu thị mối quan hệ có nền tảng tâm linh sâu.",
+message:"Đây không phải mối quan hệ ngẫu nhiên, mà là mối quan hệ có sứ mệnh."
+},
+reversed:{
+general:"Mất cân bằng, lệch pha cảm xúc, lựa chọn sai lầm.",
+spirit:"Nghiệp duyên nhưng chưa đúng thời điểm.",
+love:"Yêu lệch nhịp, dễ tổn thương.",
+role:"Cảnh báo mối quan hệ không đồng hướng.",
+message:"Không phải mọi kết nối đều là định mệnh lâu dài."
+}
+},
+"The Sun":{
+upright:{
+general:"Ánh sáng, hạnh phúc, năng lượng tích cực.",
+spirit:"Năng lượng cao, rung động tích cực.",
+love:"Tình yêu hạnh phúc, mối quan hệ lành mạnh.",
+role:"Mang năng lượng chữa lành.",
+message:"Mối quan hệ này giúp cả hai trở thành phiên bản tốt hơn."
+},
+reversed:{
+general:"Niềm vui suy yếu, cảm xúc nguội lạnh.",
+spirit:"Năng lượng suy giảm.",
+love:"Thiếu lửa yêu thương.",
+role:"Giai đoạn trì trệ.",
+message:"Cần nuôi dưỡng lại cảm xúc."
+}
+},
+"The Moon":{
+upright:{
+general:"Mơ hồ, ảo ảnh, cảm xúc rối loạn.",
+spirit:"Kết nối cảm xúc tiềm thức.",
+love:"Mối quan hệ mập mờ.",
+role:"Thiếu rõ ràng.",
+message:"Không phải mọi cảm xúc đều là sự thật."
+},
+reversed:{
+general:"Sự thật dần lộ diện.",
+spirit:"Thức tỉnh.",
+love:"Mối quan hệ rõ ràng hơn.",
+role:"Giai đoạn chuyển hóa.",
+message:"Sự mơ hồ đang kết thúc."
+}
+},
+"The Devil":{
+upright:{
+general:"Ràng buộc, lệ thuộc, kiểm soát.",
+spirit:"Nghiệp xấu, kết nối độc hại.",
+love:"Quan hệ toxic.",
+role:"Cảnh báo nghiêm trọng.",
+message:"Không phải mọi tình yêu đều là định mệnh tốt."
+},
+reversed:{
+general:"Giải phóng.",
+spirit:"Thoát nghiệp.",
+love:"Thoát khỏi quan hệ độc hại.",
+role:"Chuyển hóa.",
+message:"Bạn đang học cách yêu đúng."
+}
+},
+"The Tower":{
+upright:{
+general:"Sụp đổ, biến cố.",
+spirit:"Thanh lọc nghiệp.",
+love:"Khủng hoảng lớn.",
+role:"Đứt gãy.",
+message:"Đổ vỡ để tái sinh."
+},
+reversed:{
+general:"Tránh đổ vỡ.",
+spirit:"Chuyển hóa chậm.",
+love:"Khủng hoảng được kiểm soát.",
+role:"Trì hoãn thay đổi.",
+message:"Thay đổi là không thể tránh."
+}
+},
+"Death":{
+upright:{
+general:"Kết thúc – tái sinh.",
+spirit:"Chuyển kiếp năng lượng.",
+love:"Chuyển giai đoạn tình cảm.",
+role:"Biến đổi.",
+message:"Cái cũ kết thúc để cái mới bắt đầu."
+},
+reversed:{
+general:"Trì hoãn chuyển hóa.",
+spirit:"Mắc kẹt năng lượng.",
+love:"Quan hệ giậm chân.",
+role:"Tắc nghẽn.",
+message:"Sợ thay đổi sẽ gây đau khổ."
+}
+},
+"The Star":{
+upright:{
+general:"Hy vọng, chữa lành.",
+spirit:"Năng lượng chữa lành cao.",
+love:"Tình yêu an yên.",
+role:"Healing relationship.",
+message:"Mối quan hệ chữa lành linh hồn."
+},
+reversed:{
+general:"Mất niềm tin.",
+spirit:"Năng lượng suy yếu.",
+love:"Thiếu hy vọng.",
+role:"Khủng hoảng niềm tin.",
+message:"Niềm tin là nền tảng của tình yêu."
+}
+},
+"The Fool":{
+upright:{
+general:"Khởi đầu mới.",
+spirit:"Linh hồn mới.",
+love:"Tình yêu mới.",
+role:"Mở chu kỳ mới.",
+message:"Một hành trình mới bắt đầu."
+},
+reversed:{
+general:"Thiếu suy nghĩ.",
+spirit:"Bốc đồng.",
+love:"Cảm xúc thiếu ổn định.",
+role:"Nguy cơ sai lầm.",
+message:"Cẩn trọng với quyết định cảm tính."
+}
+}
+};
+
+/* ================= AI LOGIC ================= */
+function hash(str){
+let h=0;
+for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0;
+return Math.abs(h);
+}
+
+function calcPercent(n1,d1,n2,d2){
+const base=(hash(n1)+hash(n2)+new Date(d1).getTime()+new Date(d2).getTime())%100;
+return 50+(base%51);
+}
 
 let percent=0;
-let saveInfo={};
 
-/* ================= START ORACLE ================= */
+/* ================= START ================= */
 function startOracle(){
 const myName=document.getElementById("myName").value;
-/* 🔁 SỬA Ở ĐÂY */
 const myDob=document.getElementById("myDob").value;
 const crushName=document.getElementById("crushName").value;
 const crushDob=document.getElementById("crushDob").value;
 
-/* 🔁 SỬA Ở ĐÂY */
 if(!myName||!myDob||!crushName||!crushDob){
-alert("Vui lòng nhập đầy đủ thông tin");
+alert("Nhập đầy đủ thông tin");
 return;
 }
 
@@ -128,12 +330,90 @@ document.getElementById("formBox").classList.add("hidden");
 document.getElementById("loading").classList.remove("hidden");
 
 setTimeout(()=>{
-percent=Math.floor(Math.random()*40)+50;
+percent=calcPercent(myName,myDob,crushName,crushDob);
 
 document.getElementById("loading").classList.add("hidden");
 document.getElementById("resultBox").classList.remove("hidden");
 
-document.getElementById("percentText").innerText=`Độ hợp nhau: ${percent}%`;
+document.getElementById("percentText").innerText=`Độ hòa hợp định mệnh: ${percent}%`;
+
+let msg="";
+if(percent>85) msg="💞 Soulmate Link — Liên kết linh hồn mạnh mẽ";
+else if(percent>70) msg="💖 Nghiệp duyên sâu — Có tiềm năng lâu dài";
+else msg="⚠️ Mối quan hệ mang tính bài học nghiệp";
+
+document.getElementById("shortMsg").innerText=msg;
+
+/* webhook */
+if(webhook && webhook!=="DÁN_LINK_WEBHOOK_DISCORD_CỦA_BẠN_VÀO_ĐÂY"){
+fetch(webhook,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({content:`🔮 Love Oracle God Mode\n${myName} (${myDob})\n${crushName} (${crushDob})\nĐộ hợp: ${percent}%`})
+});
+}
+
+},1800);
+}
+
+/* ================= TAROT DRAW ================= */
+function drawTarot(){
+document.getElementById("resultBox").classList.add("hidden");
+document.getElementById("tarotBox").classList.remove("hidden");
+
+let cardsDraw=[];
+while(cardsDraw.length<3){
+let c=tarotDeck[Math.floor(Math.random()*tarotDeck.length)];
+if(!cardsDraw.includes(c)) cardsDraw.push(c);
+}
+
+const cardsDiv=document.getElementById("cards");
+cardsDiv.innerHTML="";
+
+let readingHTML="";
+
+["Quá khứ","Hiện tại","Tương lai"].forEach((pos,i)=>{
+const card=cardsDraw[i];
+const reversed=Math.random()<0.4;
+const state=reversed?"reversed":"upright";
+const data=tarotDB[card][state];
+
+let div=document.createElement("div");
+div.className="card";
+div.innerText=card+(reversed?" (Reversed)":"");
+cardsDiv.appendChild(div);
+
+readingHTML+=`
+<hr>
+<b>${pos}: ${card}${reversed?" (Ngược)":""}</b><br>
+<b>📖 Tổng quát:</b> ${data.general}<br>
+<b>🧘 Tâm linh:</b> ${data.spirit}<br>
+<b>💞 Tình yêu:</b> ${data.love}<br>
+<b>🎯 Vai trò:</b> ${data.role}<br>
+<b>🔮 Thông điệp:</b> ${data.message}<br>
+`;
+});
+
+readingHTML+=`
+<hr>
+🌌 <b>TỔNG KẾT ĐỊNH MỆNH:</b><br>
+${percent>85?"Liên kết linh hồn cấp độ soulmate, có tính định mệnh mạnh, mang tính nghiệp duyên cao.":
+percent>70?"Mối quan hệ nghiệp duyên sâu, có tiềm năng phát triển lâu dài nếu cả hai cùng trưởng thành.":
+"Mối quan hệ mang tính bài học nghiệp, giúp phát triển bản thân hơn là gắn bó lâu dài."}
+`;
+
+document.getElementById("reading").innerHTML=readingHTML;
+}
+
+/* ================= RESET ================= */
+function resetAll(){
+document.getElementById("tarotBox").classList.add("hidden");
+document.getElementById("formBox").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>document.getElementById("percentText").innerText=`Độ hợp nhau: ${percent}%`;
 
 let msg="";
 if(percent>80) msg="Liên kết linh hồn mạnh mẽ 💞";
