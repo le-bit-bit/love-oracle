@@ -64,12 +64,22 @@ function startFortune(){
    document.getElementById('percent').innerText=`Độ hợp nhau: ${percent}%`;
    document.getElementById('message').innerText=msg;
 
-   const data={name,dob,crush,percent,time:new Date().toLocaleString()};
-   fetch(webhook,{
-     method:'POST',
-     headers:{'Content-Type':'application/json'},
-     body:JSON.stringify(data)
-   });
+   const content = {
+  content: 
+`🔮 Love Oracle New Entry 💖
+👤 Tên: ${name}
+🎂 Ngày sinh: ${dob}
+💘 Crush: ${crush}
+🎂 Ngày sinh: ${dob}
+📊 Độ hợp: ${percent}%
+🕒 Thời gian: ${new Date().toLocaleString()}`
+};
+
+fetch(webhook,{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(content)
+});
  },2000);
 }
 
